@@ -66,10 +66,10 @@ void canReceiver() {
 
     if (CAN.packetRtr()) {
       Serial.print("\trequested length: ");
-      Serial.println(CAN.packetDlc());
+      Serial.print(CAN.packetDlc());
     } else {
       Serial.print("\tlength: ");
-      Serial.println(packetSize);
+      Serial.print(packetSize);
 
       // Read and print integer values
       if (packetSize >= 4) { // Ensure we have at least 4 bytes
