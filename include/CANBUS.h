@@ -3,8 +3,6 @@
 #define TX_GPIO_NUM   17  // Connects to CTX
 #define RX_GPIO_NUM   16  // Connects to CRX
 
-#define CANBUS_ID 0x12
-
 
 //==================================================================================//
 
@@ -27,7 +25,7 @@ void setupCANBUS() {
 
 //==================================================================================//
 
-void canSender(int8_t value1, int16_t value2, int8_t value3) {
+void canSender(int CANBUS_ID, int8_t value1, int16_t value2, int8_t value3) {
   Serial.print("Sending packet ... ");
 
   CAN.beginPacket(CANBUS_ID);  // Sets the ID and clears the transmit buffer
