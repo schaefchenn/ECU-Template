@@ -17,12 +17,39 @@ int8_t msg1;
 int16_t msg2;
 int8_t msg3;
 
+int8_t driveMode = 1;
 
 //==================================================================================//
 
 void CANBUS (void * pvParameters) {
   while (1){
-    canReceiver();
+    CANRECIEVER msg = canReceiver();
+
+    if (msg.recieved) {
+      Serial.print("recieved");
+      Serial.print("\tid: 0x");
+      Serial.print(msg.id, HEX);
+
+      if (msg.extended) {
+        Serial.print("\textended");
+      }
+
+      if (CAN.packetRtr()) {
+        Serial.print("\trtr");
+        Serial.print("\trequested length: ");
+        Serial.print(msg.reqLength);
+
+      } else {
+        Serial.print("\tlength: ");
+        Serial.print(msg.length);
+        Serial.print("\tdrive mode: ");
+        Serial.print(msg.val1);
+        Serial.print("\tthrottle: ");
+        Serial.print(msg.val2);
+        Serial.println();
+      }
+    }
+
     // yield
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }
@@ -37,7 +64,7 @@ void ECU (void * pvParameters){
     msg2 = 2000;
     msg3 = 9;
 
-    canSender(CANBUS_ID, msg1, msg2, msg3);
+    //canSender(CANBUS_ID, msg1, msg2, msg3);
 
     // yield
     vTaskDelay(5 / portTICK_PERIOD_MS);
