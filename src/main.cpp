@@ -9,18 +9,22 @@ static const BaseType_t app_cpu = 1; // application core
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
-// parse CAN data 
+// Set CAN ID
+#define CANBUS_ID 0x12    // put your CAN ID here
+
+// parse CAN data
 int8_t msg1;
 int16_t msg2;
 int8_t msg3;
+
 
 //==================================================================================//
 
 void CANBUS_send (void * pvParameters) {
   while (1){
-    canSender(msg1, msg2, msg3);
+    canSender(CANBUS_ID, msg1, msg2, msg3);
     // yield
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 }
 
