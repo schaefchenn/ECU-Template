@@ -9,20 +9,24 @@ static const BaseType_t app_cpu = 1; // application core
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
+// parse CAN data 
+int8_t msg1;
+int16_t msg2;
+int8_t msg3;
 
 //==================================================================================//
 
 void CANBUS_send (void * pvParameters) {
   while (1){
-    canSender();
+    canSender(msg1, msg2, msg3);
     // yield
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 
 void CANBUS_recieve (void * pvParameters) {
   while (1){
-    //canReceiver();
+    canReceiver();
     // yield
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }
@@ -33,6 +37,10 @@ void CANBUS_recieve (void * pvParameters) {
 
 void ECU (void * pvParameters){
   while(1){
+    msg1 = 2;
+    msg2 = 2000;
+    msg3 = 9;
+
     // yield
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }

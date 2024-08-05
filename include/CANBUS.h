@@ -25,22 +25,18 @@ void setupCANBUS() {
 
 //==================================================================================//
 
-void canSender() {
+void canSender(int8_t value1, int16_t value2, int8_t value3) {
   Serial.print("Sending packet ... ");
 
   CAN.beginPacket(0x12);  // Sets the ID and clears the transmit buffer
 
-  int8_t val1 = -1; // Example negative 8-bit value
-  int16_t val2 = 3000; // Example negative 16-bit value
-  int8_t val3 = 0; // Example 8-bit value
-
-  CAN.write(val1); // Write 1 byte
+  CAN.write(value1); // Write 1 byte
 
   // Break val2 into two bytes and write them
-  CAN.write((uint8_t)(val2 >> 8)); // High byte
-  CAN.write((uint8_t)(val2 & 0xFF)); // Low byte
+  CAN.write((uint8_t)(value2 >> 8)); // High byte
+  CAN.write((uint8_t)(value2 & 0xFF)); // Low byte
 
-  CAN.write(val3); // Write 1 byte
+  CAN.write(value3); // Write 1 byte
 
   CAN.endPacket();
 
