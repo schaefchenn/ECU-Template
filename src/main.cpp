@@ -9,13 +9,27 @@ static const BaseType_t app_cpu = 1; // application core
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
-void CANBUS (void * pvParameters) {
+
+//==================================================================================//
+
+void CANBUS_send (void * pvParameters) {
   while (1){
-    canSender(); 
+    canSender();
+    // yield
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+  }
+}
+
+void CANBUS_recieve (void * pvParameters) {
+  while (1){
+    canReceiver();
     // yield
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }
 }
+
+
+//==================================================================================//
 
 void ECU (void * pvParameters){
   while(1){
@@ -23,6 +37,9 @@ void ECU (void * pvParameters){
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }
 }
+
+
+//==================================================================================//
 
 void setup() {
   // Initialize serial communication at 115200 baud rate
@@ -37,13 +54,21 @@ void setup() {
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
   // Start CANcommunication (priority set to 1, 0 is the lowest priority)
-  xTaskCreatePinnedToCore(CANBUS,                         // Function to be called
-                          "Controller Area Network",      // Name of task
-                          8192,                           // Increased stack size
-                          NULL,                           // Parameter to pass to function
-                          2,                              // Increased priority
-                          NULL,                           // Task handle
-                          pro_cpu);                       // Assign to protocol core
+  xTaskCreatePinnedToCore(CANBUS_send,                                  // Function to be called
+                          "Controller Area Network Message Sending",    // Name of task
+                          4096,                                         // Increased stack size
+                          NULL,                                         // Parameter to pass to function
+                          2,                                            // Increased priority
+                          NULL,                                         // Task handle
+                          pro_cpu);                                     // Assign to protocol core
+
+  xTaskCreatePinnedToCore(CANBUS_recieve,                                  // Function to be called
+                          "Controller Area Network Message Recieving",  // Name of task
+                          4096,                                         // Increased stack size
+                          NULL,                                         // Parameter to pass to function
+                          2,                                            // Increased priority
+                          NULL,                                         // Task handle
+                          pro_cpu);                                     // Assign to protocol core
 
   // Start CANcommunication (priority set to 1, 0 is the lowest priority)
   xTaskCreatePinnedToCore(ECU,                            // Function to be called
