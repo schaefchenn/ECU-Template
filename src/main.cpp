@@ -22,7 +22,7 @@ void CANBUS_send (void * pvParameters) {
 
 void CANBUS_recieve (void * pvParameters) {
   while (1){
-    canReceiver();
+    //canReceiver();
     // yield
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }

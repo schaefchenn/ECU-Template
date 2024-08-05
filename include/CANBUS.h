@@ -30,8 +30,8 @@ void canSender() {
 
   CAN.beginPacket(0x12);  // Sets the ID and clears the transmit buffer
 
-  int8_t val1 = 1; // Example negative 8-bit value
-  int16_t val2 = -2000; // Example negative 16-bit value
+  int8_t val1 = -1; // Example negative 8-bit value
+  int16_t val2 = 3000; // Example negative 16-bit value
   int8_t val3 = 0; // Example 8-bit value
 
   CAN.write(val1); // Write 1 byte
@@ -48,37 +48,54 @@ void canSender() {
 }
 
 void canReceiver() {
-  // try to parse packet
   int packetSize = CAN.parsePacket();
 
   if (packetSize) {
-    // received a packet
-    Serial.print ("Received ");
+    Serial.print("Received ");
 
     if (CAN.packetExtended()) {
-      Serial.print ("extended ");
+      Serial.print("\textended ");
     }
 
     if (CAN.packetRtr()) {
-      // Remote transmission request, packet contains no data
-      Serial.print ("RTR ");
+      Serial.print("\tRTR ");
     }
 
-    Serial.print ("id: 0x");
-    Serial.print (CAN.packetId(), HEX);
+    Serial.print("\tid: 0x");
+    Serial.print(CAN.packetId(), HEX);
 
     if (CAN.packetRtr()) {
-      Serial.print ("\trequested length: ");
-      Serial.println (CAN.packetDlc());
+      Serial.print("\trequested length: ");
+      Serial.println(CAN.packetDlc());
     } else {
-      Serial.print ("\tlength: ");
-      Serial.println (packetSize);
+      Serial.print("\tlength: ");
+      Serial.println(packetSize);
 
-      // only print packet data for non-RTR packets
-      while (CAN.available()) {
-        Serial.print ((char) CAN.read());
+      // Read and print integer values
+      if (packetSize >= 4) { // Ensure we have at least 4 bytes
+        int8_t val1 = CAN.read(); // Read 8-bit signed integer
+
+        // Read the next two bytes and combine them into a int16_t
+        uint8_t highByte = CAN.read();
+        uint8_t lowByte = CAN.read();
+        int16_t val2 = (highByte << 8) | lowByte; // Combine bytes
+        // Interpret as signed integer
+        if (val2 & 0x8000) { // Check if the sign bit is set
+          val2 |= 0xFFFF0000; // Sign-extend to 32-bit
+        }
+
+        int8_t val3 = CAN.read(); // Read 8-bit signed integer
+
+        Serial.print("\tval1: ");
+        Serial.print(val1);
+        Serial.print("\tval2: ");
+        Serial.print(val2);
+        Serial.print("\tval3: ");
+        Serial.print(val3);
+        Serial.println();
       }
     }
+
     Serial.println();
   }
 }
