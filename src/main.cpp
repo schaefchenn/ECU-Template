@@ -20,15 +20,7 @@ int8_t msg3;
 
 //==================================================================================//
 
-void CANBUS_send (void * pvParameters) {
-  while (1){
-    canSender(CANBUS_ID, msg1, msg2, msg3);
-    // yield
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
-}
-
-void CANBUS_recieve (void * pvParameters) {
+void CANBUS (void * pvParameters) {
   while (1){
     canReceiver();
     // yield
@@ -44,6 +36,8 @@ void ECU (void * pvParameters){
     msg1 = 2;
     msg2 = 2000;
     msg3 = 9;
+
+    canSender(CANBUS_ID, msg1, msg2, msg3);
 
     // yield
     vTaskDelay(5 / portTICK_PERIOD_MS);
@@ -65,16 +59,7 @@ void setup() {
   // Wait a moment to start (so we don't miss Serial output)
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-  // Start CANcommunication (priority set to 1, 0 is the lowest priority)
-  xTaskCreatePinnedToCore(CANBUS_send,                                  // Function to be called
-                          "Controller Area Network Message Sending",    // Name of task
-                          4096,                                         // Increased stack size
-                          NULL,                                         // Parameter to pass to function
-                          2,                                            // Increased priority
-                          NULL,                                         // Task handle
-                          pro_cpu);                                     // Assign to protocol core
-
-  xTaskCreatePinnedToCore(CANBUS_recieve,                                  // Function to be called
+  xTaskCreatePinnedToCore(CANBUS,                                       // Function to be called
                           "Controller Area Network Message Recieving",  // Name of task
                           4096,                                         // Increased stack size
                           NULL,                                         // Parameter to pass to function
