@@ -10,23 +10,28 @@ TaskHandle_t Task1;
 TaskHandle_t Task2;
 
 void CANBUS (void * pvParameters) {
-
-  sniffCAN();
-
-  // yield
-  vTaskDelay(1 / portTICK_PERIOD_MS);
+  while (1){
+    canSender(); 
+    // yield
+    vTaskDelay(5 / portTICK_PERIOD_MS);
+  }
 }
 
 void ECU (void * pvParameters){
-
-
-  // yield
-  vTaskDelay(1 / portTICK_PERIOD_MS);
+  while(1){
+    // yield
+    vTaskDelay(5 / portTICK_PERIOD_MS);
+  }
 }
 
 void setup() {
   // Initialize serial communication at 115200 baud rate
   Serial.begin(115200);
+  while (!Serial);
+
+  // Setup CAN communication and ECU Components
+  setupCANBUS();
+
 
   // Wait a moment to start (so we don't miss Serial output)
   vTaskDelay(1000 / portTICK_PERIOD_MS);
