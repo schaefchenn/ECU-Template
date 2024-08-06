@@ -38,7 +38,7 @@ void setupCANBUS() {
 //==================================================================================//
 
 void canSender(int CANBUS_ID, int8_t value1, int16_t value2, int8_t value3) {
-  // Serial.print("Sending packet ... ");
+  Serial.print("Sending packet ... ");
 
   CAN.beginPacket(CANBUS_ID);  // Sets the ID and clears the transmit buffer
 
@@ -52,7 +52,7 @@ void canSender(int CANBUS_ID, int8_t value1, int16_t value2, int8_t value3) {
 
   CAN.endPacket();
 
-  // Serial.println("done");
+  Serial.println("done");
 }
 
 CANRECIEVER canReceiver() {

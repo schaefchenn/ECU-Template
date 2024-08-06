@@ -60,14 +60,17 @@ void CANBUS (void * pvParameters) {
 
 void ECU (void * pvParameters){
   while(1){
-    msg1 = 2;
+
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+    msg1 = 0;
     msg2 = 2000;
     msg3 = 9;
 
-    //canSender(CANBUS_ID, msg1, msg2, msg3);
+    canSender(CANBUS_ID, msg1, msg2, msg3);
 
     // yield
-    vTaskDelay(5 / portTICK_PERIOD_MS);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
   }
 }
 
