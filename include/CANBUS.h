@@ -13,7 +13,7 @@ struct CANRECIEVER {
   int8_t driveMode;
   int16_t throttle;
   int8_t steeringAngle;
-  int16_t voltage;
+  float voltage;
   int8_t velocity;
   int8_t acknowledged;
 };
@@ -110,8 +110,8 @@ CANRECIEVER canReceiver() {
         int8_t steeringAngle = CAN.read(); // Read 8-bit signed integer
 
         // Read the next two bytes and combine them into a int16_t
-        uint8_t highByte = CAN.read();
-        uint8_t lowByte = CAN.read();
+        highByte = CAN.read();
+        lowByte = CAN.read();
         int16_t voltage = (highByte << 8) | lowByte; // Combine bytes
         // Interpret as signed integer
         if (voltage & 0x8000) { // Check if the sign bit is set
@@ -124,7 +124,7 @@ CANRECIEVER canReceiver() {
         msg.driveMode = driveMode;
         msg.throttle = throttle;
         msg.steeringAngle = steeringAngle;
-        msg.voltage = voltage/10;
+        msg.voltage = voltage/100;
         msg.velocity = velocity;
         msg.acknowledged = acknowledged;
       }
