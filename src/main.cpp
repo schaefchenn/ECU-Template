@@ -12,12 +12,21 @@ TaskHandle_t Task2;
 // Set CAN ID
 #define CANBUS_ID 0x12    // put your CAN ID here
 
-// parse CAN data
-int8_t msg1;
-int16_t msg2;
-int8_t msg3;
-
+// CAN send values
 int8_t driveMode = 1;
+int16_t throttle;
+int8_t steeringAngle;
+int16_t voltage;
+int8_t velocity;
+int8_t acknowledged;
+
+// CAN recieve values
+uint8_t canDMODE;
+int16_t canTHROTTLE;
+int8_t canSTEERING;
+int16_t canVOLTAGE;
+int8_t canVELOCITY;
+int8_t canACKNOWLEDGED;
 
 //==================================================================================//
 
@@ -43,9 +52,17 @@ void CANBUS (void * pvParameters) {
         Serial.print("\tlength: ");
         Serial.print(msg.length);
         Serial.print("\tdrive mode: ");
-        Serial.print(msg.val1);
+        Serial.print(msg.driveMode);
         Serial.print("\tthrottle: ");
-        Serial.print(msg.val2);
+        Serial.print(msg.throttle);
+        Serial.print("\tsteering angle: ");
+        Serial.print(msg.steeringAngle);
+        Serial.print("\tvoltage: ");
+        Serial.print(msg.voltage);
+        Serial.print("\tvelocity: ");
+        Serial.print(msg.velocity);
+        Serial.print("\tacknowledged: ");
+        Serial.print(msg.acknowledged);
         Serial.println();
       }
     }
@@ -63,14 +80,20 @@ void ECU (void * pvParameters){
 
     vTaskDelay(10000 / portTICK_PERIOD_MS);
 
-    msg1 = 0;
-    msg2 = 2000;
-    msg3 = 9;
+    driveMode = 0;
+    throttle = 2000;
+    steeringAngle = 60;
+    voltage = 1085; 
+    velocity = 60;
+    acknowledged = 1;
 
-    canSender(CANBUS_ID, msg1, msg2, msg3);
+    canSender(CANBUS_ID, driveMode, throttle, steeringAngle, voltage, velocity, acknowledged);
 
     // yield
     vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+    driveMode = 1;
+    canSender(CANBUS_ID, driveMode, throttle, steeringAngle, voltage, velocity, acknowledged);
   }
 }
 
